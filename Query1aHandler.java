@@ -2,34 +2,25 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import java.util.*;
 
-public class Query1aHandler extends DefaultHandler{
-    private Publication currentPublication;
-    private ArrayList<Publication> ret;
+public class Query1aHandler extends Query1Handler {
     private Person author;
-    private static final Set<String> PUB_TYPES = new HashSet<>(Arrays.asList("article", "book", "incollection", "inproceedings", "phdthesis", "proceedings", "mastersthesis"));
-    private boolean store;
     private boolean authorFound;
-    private String buffer;
+    private ArrayList<Publication> ret;
 
     public Query1aHandler(Person author) {
         this.author = author;
     }
 
     public void startDocument() throws SAXException {
-        currentPublication = null;
+        super.startDocument();
         ret = new ArrayList<>();
-        store = false;
         authorFound = false;
-        buffer = new String();
     }
 
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (PUB_TYPES.contains(localName)) {
-            currentPublication = new Publication(localName);
-            store = true;
-            authorFound = false;
-        }
+    public ArrayList<Publication> getRet() {
+        return ret;
     }
+
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (PUB_TYPES.contains(localName)) {
@@ -74,13 +65,7 @@ public class Query1aHandler extends DefaultHandler{
         buffer = new String();
     }
 
-    public ArrayList<Publication> getRet() {
-        return ret;
-    }
-
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        if (store) {
-            buffer += new String(ch, start, length);
-        }
+    public void endDocument() throws SAXException {
+        System.out.printf("Found %d publications\n", ret.size());
     }
 }
