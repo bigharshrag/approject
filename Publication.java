@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Publication {
+public class Publication implements Comparable<Publication> {
     private String key;
     private Date mDate;
     private ArrayList<String> authors;
@@ -171,4 +171,8 @@ public class Publication {
         this.editors = editors;
     }
 
+    @Override
+    public int compareTo(Publication o) {
+        return this.year.compareTo(o.getYear());
+    }
 }
