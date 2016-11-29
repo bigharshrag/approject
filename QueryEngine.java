@@ -52,4 +52,15 @@ public class QueryEngine {
             return new ArrayList<>();
         }
     }
+
+    public ArrayList<Pair<Integer, Publication>> query1b(ArrayList<String> keywords) throws IOException, SAXException, ParserConfigurationException {
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setNamespaceAware(true);
+        SAXParser saxParser = spf.newSAXParser();
+        XMLReader xmlReader = saxParser.getXMLReader();
+        Query1bHandler handler = new Query1bHandler(keywords);
+        xmlReader.setContentHandler(handler);
+        xmlReader.parse(convertToFileURL(this.filename));
+        return handler.getRet();
+    }
 }
