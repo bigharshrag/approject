@@ -13,7 +13,10 @@ public class Query1bHandler extends Query1Handler {
         if (PUB_TYPES.contains(localName)) {
             int count = 0;
             for (String keyword : keywords) {
-                if (currentPublication.getTitle().contains(keyword)) {
+                boolean found = false;
+                String titleLower = currentPublication.getTitle().toLowerCase();
+                String keywordLower = keyword.toLowerCase();
+                if (titleLower.contains(keywordLower)) {
                     ++count;
                 }
             }
