@@ -1,16 +1,18 @@
 import java.util.ArrayList;
 
 public class Person {
-    private String name;
+    private ArrayList<String> names;
     private ArrayList<Publication> publications;
 
-    public Person(String name, ArrayList<Publication> publications) {
-        this.name = name;
-        this.publications = publications;
+    public Person() {
     }
 
-    public String getName() {
-        return name;
+    public void addName(String name) {
+        names.add(name);
+    }
+
+    public ArrayList<String> getNames() {
+        return names;
     }
 
     public ArrayList<Publication> getPublications() {
