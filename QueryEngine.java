@@ -12,6 +12,23 @@ public class QueryEngine {
     private boolean sortByRelevance;
     private boolean sortByDate;
     private Integer sinceYear;
+
+    public void setSortByRelevance(boolean sortByRelevance) {
+        this.sortByRelevance = sortByRelevance;
+    }
+
+    public void setSortByDate(boolean sortByDate) {
+        this.sortByDate = sortByDate;
+    }
+
+    public void setSinceYear(Integer sinceYear) {
+        this.sinceYear = sinceYear;
+    }
+
+    public void setToYear(Integer toYear) {
+        this.toYear = toYear;
+    }
+
     private Integer toYear;
 
     public QueryEngine(String filename) throws ParserConfigurationException, SAXException, IOException {
