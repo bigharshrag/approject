@@ -1,12 +1,14 @@
-public class Pair<T> {
-    private T first, second;
+public class Pair<T1 extends Comparable<T1>, T2 extends Comparable<T2>> implements Comparable<Pair<T1, T2>> {
+    private T1 first;
+    private T2 second;
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Pair<?> pair = (Pair<?>) o;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
 
         if (!first.equals(pair.first)) return false;
         return second.equals(pair.second);
@@ -20,25 +22,33 @@ public class Pair<T> {
         return result;
     }
 
-    public T getFirst() {
-
+    public T1 getFirst() {
         return first;
     }
 
-    public void setFirst(T first) {
+    public void setFirst(T1 first) {
         this.first = first;
     }
 
-    public T getSecond() {
+    public T2 getSecond() {
         return second;
     }
 
-    public void setSecond(T second) {
+    public void setSecond(T2 second) {
         this.second = second;
     }
 
-    public Pair(T first, T second) {
+    public Pair(T1 first, T2 second) {
         this.first = first;
         this.second = second;
+    }
+
+    @Override
+    public int compareTo(Pair<T1, T2> o) {
+        if (this.first.compareTo(o.getFirst()) == 0) {
+            return this.second.compareTo(o.getSecond());
+        } else {
+            return this.first.compareTo(o.getFirst());
+        }
     }
 }
