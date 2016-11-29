@@ -5,6 +5,8 @@ public class Person {
     private ArrayList<Publication> publications;
 
     public Person() {
+        names = new ArrayList<>();
+        publications = new ArrayList<>();
     }
 
     public void addName(String name) {

@@ -36,7 +36,6 @@ public class Query1aHandler extends DefaultHandler{
             if (authorFound) {
                 ret.add(currentPublication);
             }
-            ret = new ArrayList<>();
             store = false;
             authorFound = false;
         } else if (store) {

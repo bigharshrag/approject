@@ -20,8 +20,13 @@ public class AuthorHandler extends DefaultHandler {
         currentPerson = null;
     }
 
+    public void endDocument() throws SAXException {
+        System.out.printf("Found %d authors\n", authorsList.size());
+    }
+
+
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if(localName.equals("www") && attributes.getValue(0).startsWith("homepages")) {
+        if(localName.equals("www") && attributes.getValue(1).startsWith("homepages")) {
             store = true;
             currentPerson = new Person();
         }

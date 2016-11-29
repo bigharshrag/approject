@@ -36,7 +36,7 @@ public class QueryEngine {
         return "file:" + path;
     }
 
-    public ArrayList<Publication> Query1a(String authorName) throws IOException, SAXException, ParserConfigurationException {
+    public ArrayList<Publication> query1a(String authorName) throws IOException, SAXException, ParserConfigurationException {
         Person value;
         if ((value = authors.get(authorName)) != null) {
             SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -48,6 +48,7 @@ public class QueryEngine {
             xmlReader.parse(convertToFileURL(this.filename));
             return handler.getRet();
         } else {
+            System.out.println("Author not found");
             return new ArrayList<>();
         }
     }
