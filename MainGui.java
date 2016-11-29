@@ -1,8 +1,15 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 public class MainGui {
 
@@ -17,6 +24,8 @@ public class MainGui {
 	private static JButton resetButton;
 	private static GridBagConstraints c = new GridBagConstraints();
 	private static boolean authorFlag;  // true for author button, false for title
+	private static boolean sinceFlag;  // true for since button, false for range
+	private static boolean sortByDateFlag;  // true for by date button, false for relevance
 	private static JTextField findByField;
 	private static JTextField sinceYrField;
 	private static JTextField rangeYrFieldi;
@@ -30,7 +39,11 @@ public class MainGui {
 	private static int publVal;
 	private static int i;
 	private static String[] authVal;
-	
+	private static QueryEngine queryEngine;
+	private static DefaultTableModel tabModel;
+	private static JTable resultTable ;
+	private static JScrollPane tablePane ;
+
 	public static JPanel getMainPanel()
 	{
 		mainPanel = new JPanel(new GridBagLayout());
@@ -82,6 +95,7 @@ public class MainGui {
 	        		querySelectPanel.removeAll();
 	        		querySelectPanel.add(querybox);
 	        		querySelectPanel.add(Box.createVerticalStrut(25));
+	        		tabModel.setRowCount(0);
 		    		mainQuerySelectPanel.validate();
 		    		mainQuerySelectPanel.repaint();
 				}
@@ -104,17 +118,51 @@ public class MainGui {
 		mainQuerySelectPanel.add(querySelectPanel);
 		mainPanel.add(mainQuerySelectPanel, c);
 		
-
+		// String[] columnNames = {"SNo.", "Authors", "Title", "Pages", "Year", "Volume", "Journal/Booktitle", "URL"};
+		// Object[][] data = {{}}; 
 		resultDisplayPanel = new JPanel(new GridBagLayout());
-		JButton button3 = new JButton("result display");
-		resultDisplayPanel.add(button3);
+		// JTable resultTable = new JTable(data, columnNames);
+        // resultTable.setFillsViewportHeight(true);
+  //       JScrollPane scrollPane = new JScrollPane(resultTable);
+  //       resultDisplayPanel.add(scrollPane);
+        
+        final ArrayList<ArrayList<String>> rowData = new ArrayList<ArrayList<String>>();
+		Object columnNames[] = { "SNo.", "Authors", "Title", "Pages", "Year", "Volume", "Journal/Booktitle", "URL"};
+		tabModel = new DefaultTableModel(0,8);
+		tabModel.setColumnIdentifiers(columnNames);
+		tabModel.setRowCount(0);
+		resultTable = new JTable(tabModel);
+		resultTable.setPreferredScrollableViewportSize(new Dimension(500, 400));
+		tablePane = new JScrollPane(resultTable);
+		tablePane.setBorder(BorderFactory.createLineBorder(Color.black, 2, true));
+		resultDisplayPanel.add(tablePane);
+
+//		showMoreEntries(table, rowData, 0);
+		
+		JButton nextButton = new JButton("Next");
+		nextButton.setBorder(BorderFactory.createLineBorder(Color.black, 1, true));
+//		c.gridwidth = 1;
+//		c.gridheight = 1;
+//		c.ipady = 30;
+//		c.ipadx = 40;
+//		c.insets = new Insets(0,0,30,0);
+//		c.anchor = GridBagConstraints.PAGE_END;
+		resultDisplayPanel.add(nextButton);
+		nextButton.addActionListener(new ActionListener() 
+		{
+		 public void actionPerformed(ActionEvent e) {
+//			 showMoreEntries(table, rowData, pageNumber++);
+		 	}
+		});
+
+
 		// Debug
 		resultDisplayPanel.setBackground(Color.YELLOW);
 		c.fill = GridBagConstraints.VERTICAL;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
-		c.ipadx = 350;
-		c.ipady = 500;
+		c.ipadx = 15;
+		c.ipady = 50;
 		c.gridx = 1;
 		c.gridy = 1;
 		c.gridwidth = 1;
@@ -124,6 +172,49 @@ public class MainGui {
 		
 		return mainPanel;
 	}
+	
+//	private int getNextEntries(JTable table, int index, String sp1, int val, int y1, int y2)
+//	{
+//		DefaultTableModel model = (DefaultTableModel) results.getModel();
+//		model.setRowCount(0);
+//		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+//		rightRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+//		table.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
+//		for (int j = 0; j < 20; j++) {
+//			int a = (index * 20) + j + 1;
+//			if (a > c_query1.ret_searchresult().size()) {
+//				i = 1;
+//				counter = 0;
+//				model.setRowCount(0);
+//				return 1;
+//
+//			}
+//			Publications cur_publications = c_query1.ret_Search_result(counter);
+//			counter++;
+//			while (Integer.parseInt((cur_publications.ret_year())) > y2) {
+//				if (counter > c_query1.ret_searchresult().size()) {
+//					i = 1;
+//					counter = 0;
+//					return 1;
+//
+//				}
+//
+//				cur_publications = c_query1.ret_Search_result(counter);
+//				counter++;
+//			}
+//			if (Integer.parseInt((cur_publications.ret_year())) >= y1
+//					&& Integer.parseInt((cur_publications.ret_year())) <= y2) {
+//
+//				String[] temp = cur_publications.gui_output_format(sp1, val, a - 1);
+//				temp[0] = "";
+//				temp[0] += a;
+//				model.addRow(temp);
+//
+//			}
+//
+//		}
+//		return 0;
+//	}
 	
 	public static void updateQueryPanel(String queryChoice)
 	{
@@ -142,13 +233,21 @@ public class MainGui {
 		querybox.setSelectedIndex(1);
 		querySelectPanel.add(querybox);
 		querySelectPanel.add(Box.createVerticalStrut(25));
+
+		//Reset values
+		sinceYrVal = 0;
+		startYrVal = 0;
+		endYrVal = 2020;
+		sortByDateFlag = true;
+		sinceFlag = false;
+
 		
 		JRadioButton authorButton = new JRadioButton("Find by Author Name");
 	    JRadioButton titleButton = new JRadioButton("Find by Title Tags");
 	    ButtonGroup bG = new ButtonGroup();
 	    bG.add(authorButton);
 	    bG.add(titleButton);
-	    findByField = new JTextField(40);
+	    findByField = new JTextField(100);
 		JLabel findLabel = new JLabel("Enter author/Title");
 
 		querySelectPanel.add(authorButton);
@@ -209,14 +308,6 @@ public class MainGui {
 		querySelectPanel.add(rangePanel);
 		querySelectPanel.add(Box.createVerticalStrut(10));
 
-		findByField.addActionListener(new ActionListener() 
-		{
-		    public void actionPerformed(ActionEvent e) 
-		    {
-			    findByInput = findByField.getText();
-		    }
-	    });
-
 	    sinceYrField.addActionListener(new ActionListener() 
 		{
 		    public void actionPerformed(ActionEvent e) 
@@ -229,7 +320,7 @@ public class MainGui {
 		{
 		    public void actionPerformed(ActionEvent e) 
 		    {
-			    sinceYrVal = Integer.parseInt(rangeYrFieldi.getText());
+			    startYrVal = Integer.parseInt(rangeYrFieldi.getText());
 		    }
 	    });
 
@@ -245,6 +336,7 @@ public class MainGui {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
                     if(e.getStateChange() == ItemEvent.SELECTED){
+                    	sinceFlag = true;
                         sinceYrField.setEnabled(true);
                         sinceYrField.setText("");
                     }
@@ -260,6 +352,7 @@ public class MainGui {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
                     if(e.getStateChange() == ItemEvent.SELECTED){
+                        sinceFlag = false;
                         rangeYrFieldi.setEnabled(true);
                         rangeYrFieldf.setEnabled(true);
                         rangeYrFieldi.setText("");
@@ -274,6 +367,32 @@ public class MainGui {
 
                 }
             });
+
+		JRadioButton dateButton = new JRadioButton("Sort By date");
+	    JRadioButton relevButton = new JRadioButton("Sort by relevance");
+	    ButtonGroup bG3 = new ButtonGroup();
+	    bG3.add(dateButton);
+	    bG3.add(relevButton);
+		querySelectPanel.add(dateButton);
+		querySelectPanel.add(Box.createVerticalStrut(5));
+		querySelectPanel.add(relevButton);
+		querySelectPanel.add(Box.createVerticalStrut(5));
+
+	    dateButton.addActionListener(new ActionListener()
+		{	
+			public void actionPerformed(ActionEvent	event)
+			{
+				sortByDateFlag = true;
+			}
+		});
+		
+		relevButton.addActionListener(new ActionListener()
+		{	
+			public void actionPerformed(ActionEvent	event)
+			{
+				sortByDateFlag = false;
+			}
+		});
 		
 		submitButton = new JButton("Submit");
 		submitButton.addActionListener(new ActionListener()
@@ -284,8 +403,60 @@ public class MainGui {
 				System.out.println(sinceYrVal);
 				System.out.println(startYrVal);
 				System.out.println(endYrVal);
-				// if(temp == null)
-				// 	System.out.println("Hello");
+
+				if (sortByDateFlag == true )
+					queryEngine.setSortByDate(true);
+				else
+					queryEngine.setSortByRelevance(true);
+
+				if(sinceFlag == true)
+				{
+					queryEngine.setSinceYear(sinceYrVal);
+					queryEngine.setToYear(2020);
+				}
+				else
+				{
+					queryEngine.setSinceYear(startYrVal);
+					queryEngine.setToYear(endYrVal);
+				}
+				
+				ArrayList<Publication> ans = null;
+				tabModel.setRowCount(0);
+				if(authorFlag == true)
+				{	
+					// 1a
+		        	int ikcount = 1;
+					try {
+						ans = queryEngine.query1a(findByInput);
+					} catch (IOException | SAXException | ParserConfigurationException e) {
+						e.printStackTrace();
+					}
+			        for (Publication x : ans) {
+			    		Object tempPrint[] = new Object[]{ikcount,x.getAuthors(),x.getTitle(),x.getPages(),x.getYear(),x.getVolume(),x.getJournal(),x.getUrl()}; 
+			        	tabModel.addRow(tempPrint);
+			        	ikcount++;
+			        }
+				}
+				else
+				{
+		        	int ikcount = 1;
+		        	String splitVals[] = findByInput.split(" ");
+		        	ArrayList<String> keywords = new ArrayList<>();
+		        	for(String words : splitVals){
+		        		keywords.add(words);
+		        	}
+
+					try {
+						ans = queryEngine.query1b(keywords);
+					} catch (IOException | SAXException | ParserConfigurationException e) {
+						e.printStackTrace();
+					}
+					for (Publication x : ans) {
+			    		Object tempPrint[] = new Object[]{ikcount,x.getAuthors(),x.getTitle(),x.getPages(),x.getYear(),x.getVolume(),x.getJournal(),x.getUrl()}; 
+			        	tabModel.addRow(tempPrint);
+			        	ikcount++;
+			        }
+				}
 			}
 		});
 
@@ -333,7 +504,20 @@ public class MainGui {
 		{	
 			public void actionPerformed(ActionEvent	event)
 			{
-				System.out.println(publVal);
+				ArrayList<Person> ans2 = null;
+	        	tabModel.setRowCount(0);
+	        	int ikcount = 1;
+				try {
+					ans2 = queryEngine.query2(publVal);
+				} catch (ParserConfigurationException | SAXException | IOException e) {
+					e.printStackTrace();
+				}
+		        for (Person x : ans2) {
+		        	System.out.println(x.getNames().get(0));
+		        	tabModel.addRow(new Object[]{ikcount, x.getNames().get(0)});
+		        	ikcount++;
+		        }
+		         System.out.println(ans2.size());
 			}
 		});
 
@@ -427,10 +611,20 @@ public class MainGui {
 		mainFrame.pack();
 	}
 
-	public static void main(String[] args) 
+	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException
 	{
 		EventQueue.invokeLater(new Runnable() {
             public void run() {
+             	try {
+				 	queryEngine = new QueryEngine("dblp.xml");
+				 } catch (ParserConfigurationException e) {
+				 	e.printStackTrace();
+				 } catch (SAXException e) {
+				 	e.printStackTrace();
+				 } catch (IOException e) {
+				 	e.printStackTrace();
+				 }
+                System.out.println("Done parsing authors list");
             	displayGUI();
             }
         });
