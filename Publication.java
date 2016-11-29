@@ -6,22 +6,6 @@ public class Publication {
     private Date mDate;
     private ArrayList<String> authors;
 
-    public ArrayList<String> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(ArrayList<String> authors) {
-        this.authors = authors;
-    }
-
-    public ArrayList<String> getEditors() {
-        return editors;
-    }
-
-    public void setEditors(ArrayList<String> editors) {
-        this.editors = editors;
-    }
-
     private String title;
     private String pages;
     private Integer year;
@@ -170,4 +154,21 @@ public class Publication {
     public String getKey() {
         return key;
     }
+
+    public ArrayList<String> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(ArrayList<String> authors) {
+        this.authors = authors;
+    }
+
+    public ArrayList<String> getEditors() {
+        return editors;
+    }
+
+    public void setEditors(ArrayList<String> editors) {
+        this.editors = editors;
+    }
+
 }
