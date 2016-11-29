@@ -20,11 +20,14 @@ public class MainGui {
 	private static JTextField rangeYrFieldi;
 	private static JTextField rangeYrFieldf; 
 	private static JTextField publField; 
+	private static JTextField[] authField = new JTextField[5];
 	private static String findByInput;
 	private static int sinceYrVal;
 	private static int startYrVal;
 	private static int endYrVal;
 	private static int publVal;
+	private static int i;
+	private static String[] authVal;
 	
 	public static JPanel getMainPanel()
 	{
@@ -312,6 +315,13 @@ public class MainGui {
 
 		submitButton = new JButton("Submit");
 		querySelectPanel.add(submitButton);
+		submitButton.addActionListener(new ActionListener()
+		{	
+			public void actionPerformed(ActionEvent	event)
+			{
+				System.out.println(publVal);
+			}
+		});
 
 		resetButton = new JButton("Reset");
 		querySelectPanel.add(resetButton);
@@ -333,10 +343,40 @@ public class MainGui {
 		querybox.setSelectedIndex(3);
 		querySelectPanel.add(Box.createVerticalStrut(25));
 		querySelectPanel.add(querybox);
+		 
+	
+		JLabel authLabel = new JLabel("Authors :");
+		querySelectPanel.add(authLabel);
+		for(i = 0; i < 5; ++i)
+		{
+			authField[i] = new JTextField(40);
+			querySelectPanel.add(Box.createVerticalStrut(5));
+			querySelectPanel.add(authField[i]);
+			authField[i].addActionListener(new ActionListener() 
+			{
+			    public void actionPerformed(ActionEvent e) 
+			    {
+				    authVal[i] = authField[i].getText();
+			    }
+		    });
+		}
+
+	    JLabel publLabel = new JLabel("Enter no of publications");
+		publField = new JTextField(40);
+
+		querySelectPanel.add(publLabel);
+		querySelectPanel.add(Box.createVerticalStrut(5));
+		querySelectPanel.add(publField);
+		publField.addActionListener(new ActionListener() 
+		{
+		    public void actionPerformed(ActionEvent e) 
+		    {
+			    publVal = Integer.parseInt(publField.getText());
+		    }
+	    });
 
 		submitButton = new JButton("Submit");
 		querySelectPanel.add(submitButton);
-
 		
 		resetButton = new JButton("Reset");
 		querySelectPanel.add(resetButton);
