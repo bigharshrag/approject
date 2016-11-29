@@ -1,13 +1,18 @@
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.*;
 
 public class QueryEngine {
     private HashMap<String, Person> authors;
     private ArrayList<Person> authorsList;
     private String filename;
+
+    private boolean sortByRelevance;
+    private boolean sortByDate;
+    private Integer sinceYear;
+    private Integer toYear;
 
     public QueryEngine(String filename) throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -17,6 +22,11 @@ public class QueryEngine {
         AuthorHandler handler = new AuthorHandler();
         xmlReader.setContentHandler(handler);
         xmlReader.parse(convertToFileURL(filename));
+
+        sortByDate = false;
+        sortByRelevance = false;
+        sinceYear = 0;
+        toYear = 4242;
 
         this.filename = filename;
 
@@ -46,14 +56,14 @@ public class QueryEngine {
             Query1aHandler handler = new Query1aHandler(value);
             xmlReader.setContentHandler(handler);
             xmlReader.parse(convertToFileURL(this.filename));
-            return handler.getRet();
+            return sorted(handler.getRet());
         } else {
             System.out.println("Author not found");
             return new ArrayList<>();
         }
     }
 
-    public ArrayList<Pair<Integer, Publication>> query1b(ArrayList<String> keywords) throws IOException, SAXException, ParserConfigurationException {
+    public ArrayList<Publication> query1b(ArrayList<String> keywords) throws IOException, SAXException, ParserConfigurationException {
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setNamespaceAware(true);
         SAXParser saxParser = spf.newSAXParser();
@@ -61,6 +71,29 @@ public class QueryEngine {
         Query1bHandler handler = new Query1bHandler(keywords);
         xmlReader.setContentHandler(handler);
         xmlReader.parse(convertToFileURL(this.filename));
-        return handler.getRet();
+        return sorted(handler.getRet());
+    }
+
+    class RelevanceComparator implements Comparator<Pair<Integer, Publication>> {
+        @Override
+        public int compare(Pair<Integer, Publication> o1, Pair<Integer, Publication> o2) {
+            return o1.getFirst().compareTo(o2.getFirst());
+        }
+    }
+
+    private ArrayList<Publication> sorted(ArrayList<Pair<Integer, Publication>> res) {
+        if (sortByDate && sortByRelevance) {
+            Collections.sort(res);
+        } else if (sortByDate) {
+            for (Pair<Integer, Publication> cur : res) {
+                cur.setFirst(0);
+            }
+            Collections.sort(res);
+        } else if (sortByRelevance) {
+            Collections.sort(res, new RelevanceComparator());
+        }
+        ArrayList<Publication> ans = res.stream().filter(cur -> cur.getSecond().getYear() >= sinceYear &&
+                cur.getSecond().getYear() <= toYear).map(Pair::getSecond).collect(Collectors.toCollection(ArrayList::new));
+        return ans;
     }
 }
