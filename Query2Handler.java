@@ -4,13 +4,13 @@ import java.util.*;
 
 public class Query2Handler extends DefaultHandler {
     private HashMap<Person, Integer> numPublications;
-    private HashMap<String, Person> author;
+    private HashMap<String, Person> authors;
     private static final Set<String> PUB_TYPES = new HashSet<>(Arrays.asList("article", "book", "incollection", "inproceedings", "phdthesis", "proceedings", "mastersthesis"));
     private String buffer;
     private boolean store;
 
-    public Query2Handler(HashMap<String, Person> author) {
-        this.author = author;
+    public Query2Handler(HashMap<String, Person> authors) {
+        this.authors= authors;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Query2Handler extends DefaultHandler {
             if (!localName.equals("author")) {
                 throw new SAXException("what the fuck");
             }
-            Person author = this.author.get(buffer);
+            Person author = this.authors.get(buffer);
             if (author == null) {
                 throw new SAXException("double what the fuck");
             }
