@@ -115,6 +115,14 @@ public class QueryEngine {
         }
     }
 
+    class DateLatestFirstComparator implements Comparator<Pair<Integer, Publication>> {
+        @Override
+        public int compare(Pair<Integer, Publication> o1, Pair<Integer, Publication> o2) {
+            Integer temp = -o1.getSecond().getYear();
+            return temp.compareTo(-o2.getSecond().getYear());
+        }
+    }
+
     private ArrayList<Publication> sorted(ArrayList<Pair<Integer, Publication>> res) {
         if (sortByDate && sortByRelevance) {
             Collections.sort(res);
@@ -125,6 +133,8 @@ public class QueryEngine {
             Collections.sort(res);
         } else if (sortByRelevance) {
             Collections.sort(res, new RelevanceComparator());
+        } else {
+            Collections.sort(res, new DateLatestFirstComparator());
         }
         ArrayList<Publication> ans = res.stream().filter(cur -> cur.getSecond().getYear() >= sinceYear &&
                 cur.getSecond().getYear() <= toYear).map(Pair::getSecond).collect(Collectors.toCollection(ArrayList::new));
