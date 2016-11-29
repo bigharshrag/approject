@@ -91,6 +91,23 @@ public class QueryEngine {
         return sorted(handler.getRet());
     }
 
+    public ArrayList<Person> query2(Integer K) throws ParserConfigurationException, SAXException, IOException {
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setNamespaceAware(true);
+        SAXParser saxParser = spf.newSAXParser();
+        XMLReader xmlReader = saxParser.getXMLReader();
+        Query2Handler handler = new Query2Handler(authors);
+        xmlReader.setContentHandler(handler);
+        xmlReader.parse(convertToFileURL(this.filename));
+        ArrayList<Person> ans = new ArrayList<>();
+        for (Map.Entry<Person, Integer> cur : handler.getNumPublications().entrySet()) {
+            if (cur.getValue() >= K) {
+                ans.add(cur.getKey());
+            }
+        }
+        return ans;
+    }
+
     class RelevanceComparator implements Comparator<Pair<Integer, Publication>> {
         @Override
         public int compare(Pair<Integer, Publication> o1, Pair<Integer, Publication> o2) {

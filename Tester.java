@@ -12,9 +12,9 @@ public class Tester {
         keywords.add("Computer");
         keywords.add("Programming");
         queryEngine.setSortByRelevance(true);
-        ArrayList<Publication> ans = queryEngine.query1b(keywords);
-        for (Publication x : ans) {
-            System.out.println(x.getTitle());
+        ArrayList<Person> ans = queryEngine.query2(140);
+        for (Person x : ans) {
+            System.out.println(x.getNames().get(0));
         }
     }
 }

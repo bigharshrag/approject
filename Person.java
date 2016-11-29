@@ -17,6 +17,22 @@ public class Person {
         return names;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Person person = (Person) o;
+
+        return names.equals(person.names);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return names.hashCode();
+    }
+
     public ArrayList<Publication> getPublications() {
         return publications;
     }
