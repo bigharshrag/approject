@@ -10,12 +10,20 @@ public class MainGui {
 	private static JPanel querySelectPanel;
 	private static JPanel resultDisplayPanel;
 	private static JComboBox<String> querybox; 
-	private static JTextField sinceYrField = new JTextField(40);
-	private static JRadioButton rangeYrButton;
+	// private static JRadioButton rangeYrButton;
+	private static JButton submitButton;
+	private static JButton resetButton;
+	private static GridBagConstraints c = new GridBagConstraints();
+	private static boolean authorFlag;  // true for author button, false for title
+	private static JTextField findByField;
+	private static JTextField sinceYrField;
 	private static JTextField rangeYrFieldi;
 	private static JTextField rangeYrFieldf; 
-	private static GridBagConstraints c = new GridBagConstraints();
-
+	private static String findByInput;
+	private static int sinceYrVal;
+	private static int startYrVal;
+	private static int endYrVal;
+	
 	public static JPanel getMainPanel()
 	{
 		mainPanel = new JPanel(new GridBagLayout());
@@ -131,7 +139,7 @@ public class MainGui {
 	    ButtonGroup bG = new ButtonGroup();
 	    bG.add(authorButton);
 	    bG.add(titleButton);
-	    JTextField findByField = new JTextField(40);
+	    findByField = new JTextField(40);
 		JLabel findLabel = new JLabel("Enter author/Title");
 
 		querySelectPanel.add(authorButton);
@@ -147,7 +155,7 @@ public class MainGui {
 		{	
 			public void actionPerformed(ActionEvent	event)
 			{
-				
+				authorFlag = true;
 			}
 		});
 		
@@ -155,9 +163,17 @@ public class MainGui {
 		{	
 			public void actionPerformed(ActionEvent	event)
 			{
-				
+				authorFlag = false;
 			}
 		});
+
+		findByField.addActionListener(new ActionListener() 
+		{
+		    public void actionPerformed(ActionEvent e) 
+		    {
+			    findByInput = findByField.getText();
+		    }
+	    });
 
 		JRadioButton sinceYrButton = new JRadioButton("Since Year");
 	    sinceYrField = new JTextField(40);
@@ -176,6 +192,38 @@ public class MainGui {
 		querySelectPanel.add(rangeYrFieldi);
 		querySelectPanel.add(rangeYrFieldf);
 		querySelectPanel.add(Box.createVerticalStrut(10));
+
+		findByField.addActionListener(new ActionListener() 
+		{
+		    public void actionPerformed(ActionEvent e) 
+		    {
+			    findByInput = findByField.getText();
+		    }
+	    });
+
+	    sinceYrField.addActionListener(new ActionListener() 
+		{
+		    public void actionPerformed(ActionEvent e) 
+		    {
+			    sinceYrVal = Integer.parseInt(sinceYrField.getText());
+		    }
+	    });
+
+	    rangeYrFieldi.addActionListener(new ActionListener() 
+		{
+		    public void actionPerformed(ActionEvent e) 
+		    {
+			    sinceYrVal = Integer.parseInt(rangeYrFieldi.getText());
+		    }
+	    });
+
+	    rangeYrFieldf.addActionListener(new ActionListener() 
+		{
+		    public void actionPerformed(ActionEvent e) 
+		    {
+			    endYrVal = Integer.parseInt(rangeYrFieldf.getText());
+		    }
+	    });
 
 		sinceYrButton.addItemListener(new ItemListener(){
                 @Override
@@ -211,26 +259,33 @@ public class MainGui {
                 }
             });
 		
-		// sinceYrButton.addActionListener(new ActionListener()
-		// {	
-		// 	public void actionPerformed(ActionEvent	event)
-		// 	{
-				
-		// 	}
-		// });
-		
-		// rangeYrButton.addActionListener(new ActionListener()
-		// {	
-		// 	public void actionPerformed(ActionEvent	event)
-		// 	{
-				
-		// 	}
-		// });
-		
+		submitButton = new JButton("Submit");
+		querySelectPanel.add(submitButton);
+		submitButton.addActionListener(new ActionListener()
+		{	
+			public void actionPerformed(ActionEvent	event)
+			{
+				System.out.println(findByInput);
+				System.out.println(sinceYrVal);
+				System.out.println(startYrVal);
+				System.out.println(endYrVal);
+				// if(temp == null)
+				// 	System.out.println("Hello");
+			}
+		});
+
+		resetButton = new JButton("Reset");
+		querySelectPanel.add(resetButton);
+		resetButton.addActionListener(new ActionListener()
+		{	
+			public void actionPerformed(ActionEvent	event)
+			{
+        		querybox.setSelectedIndex(0);
+			}
+		});
 		mainQuerySelectPanel.validate();
 		mainQuerySelectPanel.repaint();
 	}
-
 
 	public static void onQuery2()
 	{	
@@ -238,6 +293,20 @@ public class MainGui {
 		querybox.setSelectedIndex(2);
 		querySelectPanel.add(Box.createVerticalStrut(25));
 		querySelectPanel.add(querybox);
+
+		submitButton = new JButton("Submit");
+		querySelectPanel.add(submitButton);
+
+		resetButton = new JButton("Reset");
+		querySelectPanel.add(resetButton);
+		resetButton.addActionListener(new ActionListener()
+		{	
+			public void actionPerformed(ActionEvent	event)
+			{
+        		querybox.setSelectedIndex(0);
+			}
+		});
+
 		mainQuerySelectPanel.validate();
 		mainQuerySelectPanel.repaint();
 	}
@@ -248,6 +317,21 @@ public class MainGui {
 		querybox.setSelectedIndex(3);
 		querySelectPanel.add(Box.createVerticalStrut(25));
 		querySelectPanel.add(querybox);
+
+		submitButton = new JButton("Submit");
+		querySelectPanel.add(submitButton);
+
+		
+		resetButton = new JButton("Reset");
+		querySelectPanel.add(resetButton);
+		resetButton.addActionListener(new ActionListener()
+		{	
+			public void actionPerformed(ActionEvent	event)
+			{
+        		querybox.setSelectedIndex(0);
+			}
+		});
+
 		mainQuerySelectPanel.validate();
 		mainQuerySelectPanel.repaint();
 	}
