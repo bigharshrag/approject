@@ -19,10 +19,12 @@ public class MainGui {
 	private static JTextField sinceYrField;
 	private static JTextField rangeYrFieldi;
 	private static JTextField rangeYrFieldf; 
+	private static JTextField publField; 
 	private static String findByInput;
 	private static int sinceYrVal;
 	private static int startYrVal;
 	private static int endYrVal;
+	private static int publVal;
 	
 	public static JPanel getMainPanel()
 	{
@@ -293,6 +295,20 @@ public class MainGui {
 		querybox.setSelectedIndex(2);
 		querySelectPanel.add(Box.createVerticalStrut(25));
 		querySelectPanel.add(querybox);
+
+		JLabel publLabel = new JLabel("Enter no of publications");
+		publField = new JTextField(40);
+
+		querySelectPanel.add(publLabel);
+		querySelectPanel.add(Box.createVerticalStrut(5));
+		querySelectPanel.add(publField);
+		publField.addActionListener(new ActionListener() 
+		{
+		    public void actionPerformed(ActionEvent e) 
+		    {
+			    publVal = Integer.parseInt(publField.getText());
+		    }
+	    });
 
 		submitButton = new JButton("Submit");
 		querySelectPanel.add(submitButton);
