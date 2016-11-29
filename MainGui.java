@@ -31,14 +31,14 @@ public class MainGui {
 	private static JTextField rangeYrFieldi;
 	private static JTextField rangeYrFieldf; 
 	private static JTextField publField; 
-	private static JTextField[] authField = new JTextField[5];
+	private static JTextField authField;
 	private static String findByInput;
 	private static int sinceYrVal;
 	private static int startYrVal;
 	private static int endYrVal;
 	private static int publVal;
 	private static int i;
-	private static String[] authVal;
+	private static String authVal;
 	private static QueryEngine queryEngine;
 	private static DefaultTableModel tabModel;
 	private static JTable resultTable ;
@@ -48,7 +48,7 @@ public class MainGui {
 	{
 		mainPanel = new JPanel(new GridBagLayout());
 
-		mainPanel.setBackground(Color.RED);
+		// mainPanel.setBackground(Color.RED);
 
 		namePanel = new JPanel(new GridBagLayout());
 		
@@ -77,7 +77,7 @@ public class MainGui {
 		mainQuerySelectPanel = new JPanel(new GridBagLayout());
 		querySelectPanel = new JPanel();
 		querySelectPanel.setLayout(new BoxLayout(querySelectPanel, BoxLayout.Y_AXIS));
-		querySelectPanel.setBackground(Color.PINK);
+		// querySelectPanel.setBackground(Color.PINK);
 		
 		// TODO: Add a disabled first button
 		String[] queryList = {"Select a query", "Query 1", "Query 2", "Query 3"};
@@ -105,7 +105,7 @@ public class MainGui {
 		});
 		
 		// Debug
-		mainQuerySelectPanel.setBackground(Color.GREEN);
+		// mainQuerySelectPanel.setBackground(Color.GREEN);
 		
 		c.weightx = 0.3;
 		c.weighty = 1.0;
@@ -116,6 +116,8 @@ public class MainGui {
 		c.gridwidth = 1;
 //		c.gridheight = 5;
 		mainQuerySelectPanel.add(querySelectPanel);
+		Border raisedetched2 = BorderFactory.createLineBorder(Color.BLUE, 3);
+		mainQuerySelectPanel.setBorder(raisedetched2);
 		mainPanel.add(mainQuerySelectPanel, c);
 		
 		// String[] columnNames = {"SNo.", "Authors", "Title", "Pages", "Year", "Volume", "Journal/Booktitle", "URL"};
@@ -157,7 +159,7 @@ public class MainGui {
 
 
 		// Debug
-		resultDisplayPanel.setBackground(Color.YELLOW);
+		// resultDisplayPanel.setBackground(Color.YELLOW);
 		c.fill = GridBagConstraints.VERTICAL;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
@@ -279,7 +281,7 @@ public class MainGui {
 		{
 		    public void actionPerformed(ActionEvent e) 
 		    {
-			    findByInput = findByField.getText();
+			    // findByInput = findByField.getText();
 		    }
 	    });
 
@@ -312,7 +314,7 @@ public class MainGui {
 		{
 		    public void actionPerformed(ActionEvent e) 
 		    {
-			    sinceYrVal = Integer.parseInt(sinceYrField.getText());
+			    // sinceYrVal = Integer.parseInt(sinceYrField.getText());
 		    }
 	    });
 
@@ -320,7 +322,7 @@ public class MainGui {
 		{
 		    public void actionPerformed(ActionEvent e) 
 		    {
-			    startYrVal = Integer.parseInt(rangeYrFieldi.getText());
+			    // startYrVal = Integer.parseInt(rangeYrFieldi.getText());
 		    }
 	    });
 
@@ -328,7 +330,7 @@ public class MainGui {
 		{
 		    public void actionPerformed(ActionEvent e) 
 		    {
-			    endYrVal = Integer.parseInt(rangeYrFieldf.getText());
+			    // endYrVal = Integer.parseInt(rangeYrFieldf.getText());
 		    }
 	    });
 
@@ -403,6 +405,27 @@ public class MainGui {
 				System.out.println(sinceYrVal);
 				System.out.println(startYrVal);
 				System.out.println(endYrVal);
+				
+				try{
+					sinceYrVal = Integer.parseInt(sinceYrField.getText());
+				}
+				catch(NumberFormatException e) {
+					sinceYrVal = 0;
+				}
+				try{
+					startYrVal = Integer.parseInt(rangeYrFieldi.getText());
+				}
+				catch(NumberFormatException e) {
+					startYrVal = 0;
+				}
+				try{
+					endYrVal = Integer.parseInt(rangeYrFieldf.getText());
+				}
+				catch(NumberFormatException e) {
+					endYrVal = 2020;
+				}
+			
+				findByInput = findByField.getText();
 
 				if (sortByDateFlag == true )
 					queryEngine.setSortByDate(true);
@@ -545,39 +568,44 @@ public class MainGui {
 		querybox.setSelectedIndex(3);
 		querySelectPanel.add(Box.createVerticalStrut(25));
 		querySelectPanel.add(querybox);
-		 
 	
 		JLabel authLabel = new JLabel("Authors :");
-		querySelectPanel.add(authLabel);
-		for(i = 0; i < 5; ++i)
-		{
-			authField[i] = new JTextField(40);
-			querySelectPanel.add(Box.createVerticalStrut(5));
-			querySelectPanel.add(authField[i]);
-			authField[i].addActionListener(new ActionListener() 
-			{
-			    public void actionPerformed(ActionEvent e) 
-			    {
-				    authVal[i] = authField[i].getText();
-			    }
-		    });
-		}
+		authField = new JTextField(60);
+		querySelectPanel.add(Box.createVerticalStrut(5));
+		querySelectPanel.add(authField);
 
-	    JLabel publLabel = new JLabel("Enter no of publications");
+	    JLabel publLabel = new JLabel("Enter Year");
 		publField = new JTextField(40);
 
 		querySelectPanel.add(publLabel);
 		querySelectPanel.add(Box.createVerticalStrut(5));
 		querySelectPanel.add(publField);
-		publField.addActionListener(new ActionListener() 
-		{
-		    public void actionPerformed(ActionEvent e) 
-		    {
-			    publVal = Integer.parseInt(publField.getText());
-		    }
-	    });
+		
 
 		submitButton = new JButton("Submit");
+		submitButton.addActionListener(new ActionListener()
+		{	
+			public void actionPerformed(ActionEvent	event)
+			{
+				authVal = authField.getText();
+				try{
+					publVal = Integer.parseInt(publField.getText());
+				}
+				catch(NumberFormatException e) {
+					publVal = 0;
+				}
+
+				int ans = -1;
+	        	tabModel.setRowCount(0);
+				try {
+					ans = queryEngine.query3(authVal, publVal);
+				} catch (ParserConfigurationException | SAXException | IOException e) {
+					e.printStackTrace();
+				}
+				tabModel.addRow(new Object[]{"No of publications predicted", ans});
+
+			}
+		});
 		
 		resetButton = new JButton("Reset");
 		resetButton.addActionListener(new ActionListener()
