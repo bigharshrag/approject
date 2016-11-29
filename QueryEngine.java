@@ -6,7 +6,6 @@ import org.xml.sax.*;
 
 public class QueryEngine {
     private HashMap<String, Person> authors;
-    private ArrayList<Person> authorsList;
     private String filename;
 
     private boolean sortByRelevance;
@@ -48,7 +47,6 @@ public class QueryEngine {
         this.filename = filename;
 
         authors = handler.getAuthors();
-        authorsList = handler.getAuthorsList();
     }
 
     private static String convertToFileURL(String filename) {
@@ -106,6 +104,23 @@ public class QueryEngine {
             }
         }
         return ans;
+    }
+
+    public Integer query3(String authorName, Integer yearUpto) throws ParserConfigurationException, SAXException, IOException {
+        Person value;
+        if ((value = authors.get(authorName)) != null) {
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            SAXParser saxParser = spf.newSAXParser();
+            XMLReader xmlReader = saxParser.getXMLReader();
+            Query3Handler handler = new Query3Handler(authors, yearUpto);
+            xmlReader.setContentHandler(handler);
+            xmlReader.parse(convertToFileURL(this.filename));
+            return handler.getNumPublicationsProjected().get(value);
+        } else {
+            System.out.println("Author does not exist");
+            return 0;
+        }
     }
 
     class RelevanceComparator implements Comparator<Pair<Integer, Publication>> {

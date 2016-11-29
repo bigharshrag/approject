@@ -9,31 +9,14 @@ public class Tester {
         QueryEngine queryEngine = new QueryEngine("dblp.xml");
         System.out.println("Done parsing authors list");
 
-        //Query 1b.
-        ArrayList<String> keywords = new ArrayList<>();
-        keywords.add("Computer");
-        keywords.add("Programming");
-        queryEngine.setSortByRelevance(true);
-        ArrayList<Publication> ans = queryEngine.query1b(keywords);
-        for (Publication x : ans) {
-            System.out.println(x.getTitle());
-        }
-
-        System.out.printf("\n\n\n\n\n\n\n\n");
+        String author = "Harold Vincent Poor";
 
         //Query 1a
-        ans = queryEngine.query1a("Rahul Purandare");
-        for (Publication x : ans) {
-            System.out.println(x.getTitle());
-        }
+        ArrayList<Publication> ans = queryEngine.query1a(author);
+        System.out.printf("actual size: %d\n", ans.size());
 
-        System.out.printf("\n\n\n\n\n\n\n\n");
+        //Query 3
+        System.out.printf("predicted size: %d\n", queryEngine.query3(author, 2013));
 
-        //Query 2.
-        ArrayList<Person> ans2 = queryEngine.query2(900);
-        for (Person x : ans2) {
-            System.out.println(x.getNames().get(0));
-        }
-        System.out.println(ans.size());
     }
 }
