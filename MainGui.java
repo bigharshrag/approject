@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 
 public class MainGui {
 
@@ -43,7 +45,10 @@ public class MainGui {
 		namePanel.add(nameLabel); 
 		
 		// Debug
-		namePanel.setBackground(Color.BLUE);
+//		namePanel.setBackground(Color.BLUE);
+		
+		Border raisedetched = BorderFactory.createLineBorder(Color.BLUE, 3);
+		namePanel.setBorder(raisedetched);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1.0;
@@ -65,7 +70,7 @@ public class MainGui {
 		String[] queryList = {"Select a query", "Query 1", "Query 2", "Query 3"};
 		querybox = new JComboBox<String>(queryList);
 		querySelectPanel.add(querybox);
-		querySelectPanel.add(Box.createVerticalStrut(25));
+		querySelectPanel.add(Box.createVerticalStrut(200));
 		querybox.addActionListener(new ActionListener()
 		{	
 			public void actionPerformed(ActionEvent	event)
@@ -88,11 +93,10 @@ public class MainGui {
 		// Debug
 		mainQuerySelectPanel.setBackground(Color.GREEN);
 		
-		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 0.3;
 		c.weighty = 1.0;
 		c.ipadx = 200;
-		c.ipady = 500;
+		c.ipady = 300;
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 1;
@@ -183,19 +187,26 @@ public class MainGui {
 		JRadioButton sinceYrButton = new JRadioButton("Since Year");
 	    sinceYrField = new JTextField(40);
 	    JRadioButton rangeYrButton = new JRadioButton("Custom Range");
-	    rangeYrFieldi = new JTextField(10);
-	    rangeYrFieldf = new JTextField(10);
 	    ButtonGroup bG2 = new ButtonGroup();
 	    bG2.add(sinceYrButton);
 	    bG2.add(rangeYrButton);
+
+	    JPanel rangePanel = new JPanel();
+		rangePanel.setLayout(new BoxLayout(rangePanel, BoxLayout.X_AXIS));
+	    rangeYrFieldi = new JTextField(10);
+	    rangeYrFieldf = new JTextField(10);
+	    JLabel dashlabel = new JLabel(" -- ");
+
 		querySelectPanel.add(sinceYrButton);
 		querySelectPanel.add(Box.createVerticalStrut(5));
 		querySelectPanel.add(sinceYrField);
 		querySelectPanel.add(Box.createVerticalStrut(5));
 		querySelectPanel.add(rangeYrButton);
 		querySelectPanel.add(Box.createVerticalStrut(5));
-		querySelectPanel.add(rangeYrFieldi);
-		querySelectPanel.add(rangeYrFieldf);
+		rangePanel.add(rangeYrFieldi);
+		rangePanel.add(dashlabel);
+		rangePanel.add(rangeYrFieldf);
+		querySelectPanel.add(rangePanel);
 		querySelectPanel.add(Box.createVerticalStrut(10));
 
 		findByField.addActionListener(new ActionListener() 
@@ -265,7 +276,6 @@ public class MainGui {
             });
 		
 		submitButton = new JButton("Submit");
-		querySelectPanel.add(submitButton);
 		submitButton.addActionListener(new ActionListener()
 		{	
 			public void actionPerformed(ActionEvent	event)
@@ -280,7 +290,6 @@ public class MainGui {
 		});
 
 		resetButton = new JButton("Reset");
-		querySelectPanel.add(resetButton);
 		resetButton.addActionListener(new ActionListener()
 		{	
 			public void actionPerformed(ActionEvent	event)
@@ -288,6 +297,12 @@ public class MainGui {
         		querybox.setSelectedIndex(0);
 			}
 		});
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(submitButton);
+		buttonPanel.add(resetButton);
+		querySelectPanel.add(buttonPanel);
+
 		mainQuerySelectPanel.validate();
 		mainQuerySelectPanel.repaint();
 	}
@@ -314,7 +329,6 @@ public class MainGui {
 	    });
 
 		submitButton = new JButton("Submit");
-		querySelectPanel.add(submitButton);
 		submitButton.addActionListener(new ActionListener()
 		{	
 			public void actionPerformed(ActionEvent	event)
@@ -324,7 +338,6 @@ public class MainGui {
 		});
 
 		resetButton = new JButton("Reset");
-		querySelectPanel.add(resetButton);
 		resetButton.addActionListener(new ActionListener()
 		{	
 			public void actionPerformed(ActionEvent	event)
@@ -332,6 +345,11 @@ public class MainGui {
         		querybox.setSelectedIndex(0);
 			}
 		});
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(submitButton);
+		buttonPanel.add(resetButton);
+		querySelectPanel.add(buttonPanel);
 
 		mainQuerySelectPanel.validate();
 		mainQuerySelectPanel.repaint();
@@ -376,10 +394,8 @@ public class MainGui {
 	    });
 
 		submitButton = new JButton("Submit");
-		querySelectPanel.add(submitButton);
 		
 		resetButton = new JButton("Reset");
-		querySelectPanel.add(resetButton);
 		resetButton.addActionListener(new ActionListener()
 		{	
 			public void actionPerformed(ActionEvent	event)
@@ -387,6 +403,11 @@ public class MainGui {
         		querybox.setSelectedIndex(0);
 			}
 		});
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(submitButton);
+		buttonPanel.add(resetButton);
+		querySelectPanel.add(buttonPanel);
 
 		mainQuerySelectPanel.validate();
 		mainQuerySelectPanel.repaint();
