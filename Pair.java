@@ -1,3 +1,7 @@
+/**
+@author Parth Mittal (2015069)
+@author Rishabh Garg (2015076)
+*/
 public class Pair<T1 extends Comparable<T1>, T2 extends Comparable<T2>> implements Comparable<Pair<T1, T2>> {
     private T1 first;
     private T2 second;

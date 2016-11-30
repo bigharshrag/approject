@@ -1,3 +1,7 @@
+/**
+@author Parth Mittal (2015069)
+@author Rishabh Garg (2015076)
+*/
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -120,13 +124,7 @@ public class MainGui {
 		mainQuerySelectPanel.setBorder(raisedetched2);
 		mainPanel.add(mainQuerySelectPanel, c);
 		
-		// String[] columnNames = {"SNo.", "Authors", "Title", "Pages", "Year", "Volume", "Journal/Booktitle", "URL"};
-		// Object[][] data = {{}}; 
 		resultDisplayPanel = new JPanel(new GridBagLayout());
-		// JTable resultTable = new JTable(data, columnNames);
-        // resultTable.setFillsViewportHeight(true);
-  //       JScrollPane scrollPane = new JScrollPane(resultTable);
-  //       resultDisplayPanel.add(scrollPane);
         
         final ArrayList<ArrayList<String>> rowData = new ArrayList<ArrayList<String>>();
 		Object columnNames[] = { "SNo.", "Authors", "Title", "Pages", "Year", "Volume", "Journal/Booktitle", "URL"};
@@ -143,12 +141,6 @@ public class MainGui {
 		
 		JButton nextButton = new JButton("Next");
 		nextButton.setBorder(BorderFactory.createLineBorder(Color.black, 1, true));
-//		c.gridwidth = 1;
-//		c.gridheight = 1;
-//		c.ipady = 30;
-//		c.ipadx = 40;
-//		c.insets = new Insets(0,0,30,0);
-//		c.anchor = GridBagConstraints.PAGE_END;
 		resultDisplayPanel.add(nextButton);
 		nextButton.addActionListener(new ActionListener() 
 		{
@@ -174,49 +166,6 @@ public class MainGui {
 		
 		return mainPanel;
 	}
-	
-//	private int getNextEntries(JTable table, int index, String sp1, int val, int y1, int y2)
-//	{
-//		DefaultTableModel model = (DefaultTableModel) results.getModel();
-//		model.setRowCount(0);
-//		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-//		rightRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-//		table.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
-//		for (int j = 0; j < 20; j++) {
-//			int a = (index * 20) + j + 1;
-//			if (a > c_query1.ret_searchresult().size()) {
-//				i = 1;
-//				counter = 0;
-//				model.setRowCount(0);
-//				return 1;
-//
-//			}
-//			Publications cur_publications = c_query1.ret_Search_result(counter);
-//			counter++;
-//			while (Integer.parseInt((cur_publications.ret_year())) > y2) {
-//				if (counter > c_query1.ret_searchresult().size()) {
-//					i = 1;
-//					counter = 0;
-//					return 1;
-//
-//				}
-//
-//				cur_publications = c_query1.ret_Search_result(counter);
-//				counter++;
-//			}
-//			if (Integer.parseInt((cur_publications.ret_year())) >= y1
-//					&& Integer.parseInt((cur_publications.ret_year())) <= y2) {
-//
-//				String[] temp = cur_publications.gui_output_format(sp1, val, a - 1);
-//				temp[0] = "";
-//				temp[0] += a;
-//				model.addRow(temp);
-//
-//			}
-//
-//		}
-//		return 0;
-//	}
 	
 	public static void updateQueryPanel(String queryChoice)
 	{
@@ -401,31 +350,49 @@ public class MainGui {
 		{	
 			public void actionPerformed(ActionEvent	event)
 			{
-				System.out.println(findByInput);
-				System.out.println(sinceYrVal);
-				System.out.println(startYrVal);
-				System.out.println(endYrVal);
+				
 				
 				try{
 					sinceYrVal = Integer.parseInt(sinceYrField.getText());
 				}
 				catch(NumberFormatException e) {
 					sinceYrVal = 0;
+					if(sinceFlag == true)
+					{
+						JFrame errorFrame = new JFrame();
+						JOptionPane.showMessageDialog(errorFrame, "Invalid input. Need an integer", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				try{
 					startYrVal = Integer.parseInt(rangeYrFieldi.getText());
 				}
 				catch(NumberFormatException e) {
 					startYrVal = 0;
+					if(sinceFlag == false)
+					{
+						JFrame errorFrame = new JFrame();
+						JOptionPane.showMessageDialog(errorFrame, "Invalid input. Need an integer for starting year", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				try{
 					endYrVal = Integer.parseInt(rangeYrFieldf.getText());
 				}
 				catch(NumberFormatException e) {
 					endYrVal = 2020;
+					if(sinceFlag == false)
+					{
+						JFrame errorFrame = new JFrame();
+						JOptionPane.showMessageDialog(errorFrame, "Invalid input. Need an integer for ending year", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			
 				findByInput = findByField.getText();
+				if(findByInput == "")
+				{
+					JFrame errorFrame = new JFrame();
+					JOptionPane.showMessageDialog(errorFrame, "Invalid input. Empty data", "Error", JOptionPane.ERROR_MESSAGE);
+					querybox.setSelectedIndex(0);
+				}
 
 				if (sortByDateFlag == true )
 					queryEngine.setSortByDate(true);
@@ -443,6 +410,11 @@ public class MainGui {
 					queryEngine.setToYear(endYrVal);
 				}
 				
+				System.out.println(findByInput);
+				System.out.println(sinceYrVal);
+				System.out.println(startYrVal);
+				System.out.println(endYrVal);
+
 				ArrayList<Publication> ans = null;
 				tabModel.setRowCount(0);
 				if(authorFlag == true)
@@ -454,11 +426,17 @@ public class MainGui {
 					} catch (IOException | SAXException | ParserConfigurationException e) {
 						e.printStackTrace();
 					}
-			        for (Publication x : ans) {
-			    		Object tempPrint[] = new Object[]{ikcount,x.getAuthors(),x.getTitle(),x.getPages(),x.getYear(),x.getVolume(),x.getJournal(),x.getUrl()}; 
-			        	tabModel.addRow(tempPrint);
-			        	ikcount++;
-			        }
+					if( ans.size() == 0)
+					{
+						tabModel.addRow(new Object[]{"No results Found!"});
+					}
+					else{
+				        for (Publication x : ans) {
+				    		Object tempPrint[] = new Object[]{ikcount,x.getAuthors(),x.getTitle(),x.getPages(),x.getYear(),x.getVolume(),x.getJournal(),x.getUrl()}; 
+				        	tabModel.addRow(tempPrint);
+				        	ikcount++;
+				        }						
+					}
 				}
 				else
 				{
@@ -474,11 +452,17 @@ public class MainGui {
 					} catch (IOException | SAXException | ParserConfigurationException e) {
 						e.printStackTrace();
 					}
-					for (Publication x : ans) {
-			    		Object tempPrint[] = new Object[]{ikcount,x.getAuthors(),x.getTitle(),x.getPages(),x.getYear(),x.getVolume(),x.getJournal(),x.getUrl()}; 
-			        	tabModel.addRow(tempPrint);
-			        	ikcount++;
-			        }
+					if( ans.size() == 0)
+					{
+						tabModel.addRow(new Object[]{"No results Found!"});
+					}
+					else{
+						for (Publication x : ans) {
+				    		Object tempPrint[] = new Object[]{ikcount,x.getAuthors(),x.getTitle(),x.getPages(),x.getYear(),x.getVolume(),x.getJournal(),x.getUrl()}; 
+				        	tabModel.addRow(tempPrint);
+				        	ikcount++;
+				        }
+				    }
 				}
 			}
 		});
@@ -518,7 +502,7 @@ public class MainGui {
 		{
 		    public void actionPerformed(ActionEvent e) 
 		    {
-			    publVal = Integer.parseInt(publField.getText());
+			    // publVal = Integer.parseInt(publField.getText());
 		    }
 	    });
 
@@ -528,6 +512,16 @@ public class MainGui {
 			public void actionPerformed(ActionEvent	event)
 			{
 				ArrayList<Person> ans2 = null;
+
+				try{
+				    publVal = Integer.parseInt(publField.getText());
+				}
+				catch(NumberFormatException e) {
+						JFrame errorFrame = new JFrame();
+						JOptionPane.showMessageDialog(errorFrame, "Invalid input. Need an integer", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				
+
 	        	tabModel.setRowCount(0);
 	        	int ikcount = 1;
 				try {
@@ -535,11 +529,17 @@ public class MainGui {
 				} catch (ParserConfigurationException | SAXException | IOException e) {
 					e.printStackTrace();
 				}
-		        for (Person x : ans2) {
-		        	System.out.println(x.getNames().get(0));
-		        	tabModel.addRow(new Object[]{ikcount, x.getNames().get(0)});
-		        	ikcount++;
-		        }
+				if( ans2.size() == 0)
+				{
+					tabModel.addRow(new Object[]{"No results Found!"});
+				}
+				else{
+			        for (Person x : ans2) {
+			        	System.out.println(x.getNames().get(0));
+			        	tabModel.addRow(new Object[]{ikcount, x.getNames().get(0)});
+			        	ikcount++;
+			        }
+			    }
 		         System.out.println(ans2.size());
 			}
 		});
